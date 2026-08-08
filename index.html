@@ -139,102 +139,37 @@
     }
 
 
-    /* ===== CARTA 2.4 — RELIEVE VISUAL EN TODOS LOS BOTONES ===== */
+    /* ===== CARTA 2.6 — ZONAS DE TOQUE AJUSTADAS A LAS FIGURAS ===== */
     .hotspot{
       -webkit-tap-highlight-color:transparent;
       outline:none;
-      border-radius:12px;
-      transition:
-        transform .13s cubic-bezier(.2,.8,.2,1),
-        filter .13s ease,
-        box-shadow .13s ease;
-      box-shadow:
-        0 2px 5px rgba(0,0,0,.20),
-        inset 0 1px 0 rgba(255,255,255,.18),
-        inset 0 -2px 4px rgba(0,0,0,.18);
+      border:0;
+      padding:0;
+      margin:0;
+      background:transparent;
+      box-shadow:none;
+      transition:transform .10s ease;
     }
 
-    /* The visual surface never captures pointer/touch events. */
-    .hotspot::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      border-radius:inherit;
-      pointer-events:none;
-      background:
-        linear-gradient(
-          145deg,
-          rgba(255,255,255,.16) 0%,
-          rgba(255,255,255,.04) 38%,
-          rgba(0,0,0,.06) 65%,
-          rgba(0,0,0,.15) 100%
-        );
-      border:1px solid rgba(255,255,255,.20);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.20),
-        inset 0 -3px 5px rgba(0,0,0,.18);
-      opacity:.55;
-      transition:opacity .13s ease,box-shadow .13s ease;
-    }
-
+    /* Las zonas son invisibles: no se dibuja ningún cuadrado sobre la imagen. */
+    .hotspot::before,
     .hotspot::after{
-      content:"";
-      position:absolute;
-      left:8%;
-      right:8%;
-      bottom:-5px;
-      height:6px;
+      display:none !important;
+      content:none !important;
+    }
+
+    /* Los botones circulares siguen exactamente la forma circular de la imagen. */
+    .hotspot.circle{
       border-radius:50%;
-      pointer-events:none;
-      background:rgba(0,0,0,.24);
-      filter:blur(3px);
-      opacity:.38;
-      transition:opacity .13s ease,transform .13s ease;
-    }
-
-    .hotspot:hover,
-    .hotspot:focus-visible{
-      transform:translateY(-2px) scale(1.012);
-      filter:brightness(1.05);
-      box-shadow:
-        0 5px 11px rgba(0,0,0,.28),
-        inset 0 1px 0 rgba(255,255,255,.24),
-        inset 0 -2px 5px rgba(0,0,0,.20);
-    }
-
-    .hotspot:hover::before,
-    .hotspot:focus-visible::before{
-      opacity:.82;
     }
 
     .hotspot:active,
     .hotspot.is-touching{
-      transform:translateY(2px) scale(.97);
-      filter:brightness(.96);
-      box-shadow:
-        0 1px 2px rgba(0,0,0,.25),
-        inset 0 3px 7px rgba(0,0,0,.28),
-        inset 0 -1px 0 rgba(255,255,255,.10);
-    }
-
-    .hotspot:active::before,
-    .hotspot.is-touching::before{
-      opacity:.92;
-      box-shadow:
-        inset 0 3px 7px rgba(0,0,0,.28),
-        inset 0 -1px 0 rgba(255,255,255,.08);
-    }
-
-    .hotspot:active::after,
-    .hotspot.is-touching::after{
-      opacity:.12;
-      transform:scale(.78);
+      transform:scale(.97);
     }
 
     @media (prefers-reduced-motion:reduce){
-      .hotspot,.hotspot::before,.hotspot::after{
-        transition:none!important;
-      }
+      .hotspot{transition:none!important;}
     }
 
 </style>
@@ -634,6 +569,12 @@
 
         button.type = "button";
         button.className = "hotspot";
+
+        // Si las dimensiones en píxeles forman un cuadrado, la figura es circular.
+        const pixelW = (link.w / 100) * 1921;
+        const pixelH = (link.h / 100) * 1080;
+        if (Math.abs(pixelW - pixelH) < 4) button.classList.add("circle");
+
         button.setAttribute("aria-label", "Ir a página " + link.target);
 
         button.style.left = link.x + "%";

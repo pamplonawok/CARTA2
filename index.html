@@ -219,10 +219,11 @@
   "links": {
     "1": [
       {
-        "x": 43.0,
-        "y": 5.0,
-        "w": 42.0,
-        "h": 87.0,
+        "x": 44.4,
+        "y": 7.2,
+        "w": 41.2,
+        "h": 41.2,
+        "shape": "circle",
         "target": 2,
         "name": "Ver carta"
       }
@@ -605,7 +606,12 @@
         button.style.left = link.x + "%";
         button.style.top = link.y + "%";
         button.style.width = link.w + "%";
-        button.style.height = link.h + "%";
+        if (link.shape === "circle") {
+          button.style.height = "auto";
+          button.style.aspectRatio = "1 / 1";
+        } else {
+          button.style.height = link.h + "%";
+        }
 
         button.addEventListener("click", function(event) {
           event.preventDefault();

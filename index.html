@@ -172,6 +172,38 @@
       border-radius:50%;
     }
 
+    /* Flechas rojas laterales: el relieve adopta la silueta de flecha. */
+    .hotspot.arrow-left::before,
+    .hotspot.arrow-right::before{
+      border:0;
+      border-radius:0;
+      background:rgba(255,255,255,.045);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,.20),
+        inset 0 -4px 7px rgba(0,0,0,.22),
+        0 3px 7px rgba(0,0,0,.18);
+    }
+
+    .hotspot.arrow-left::before{
+      clip-path:polygon(0 50%, 34% 5%, 34% 30%, 100% 30%, 100% 70%, 34% 70%, 34% 95%);
+    }
+
+    .hotspot.arrow-right::before{
+      clip-path:polygon(0 30%, 66% 30%, 66% 5%, 100% 50%, 66% 95%, 66% 70%, 0 70%);
+    }
+
+    /* Flecha amarilla curva de regreso al menú. */
+    .hotspot.curved-arrow::before{
+      border:0;
+      border-radius:0;
+      background:rgba(255,255,255,.045);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,.20),
+        inset 0 -4px 7px rgba(0,0,0,.22),
+        0 3px 7px rgba(0,0,0,.18);
+      clip-path:polygon(18% 18%, 55% 5%, 72% 14%, 55% 26%, 51% 25%, 51% 52%, 46% 68%, 35% 80%, 21% 76%, 31% 61%, 34% 48%, 34% 28%, 18% 18%);
+    }
+
     .hotspot:hover::before,
     .hotspot:focus-visible::before{
       opacity:.70;
@@ -581,6 +613,34 @@
       draw();
     }
 
+    function getShape(slideNumber, link) {
+      const name = link.name || "";
+
+      // Portada: el botón VER CARTA es circular.
+      if (slideNumber === 1 && name === "Ver carta") return "circle";
+
+      // Menú de cartas: los dos botones centrales son circulares.
+      if (slideNumber === 8 && (name === "Carta entresemana" || name === "Fin de semana y festivos")) {
+        return "circle";
+      }
+
+      // Botones circulares de navegación de las páginas de carta.
+      if (slideNumber >= 9 && slideNumber <= 14 &&
+          ["Carne y verduras", "Wok", "Marisco", "Salsas"].includes(name)) {
+        return "circle";
+      }
+
+      // Flecha amarilla curva de regreso al menú.
+      if (name === "Inicio menú") return "curved-arrow";
+
+      // Flechas rojas laterales.
+      if (slideNumber >= 2 && slideNumber <= 4 && name === "Inicio") return "arrow-left";
+      if (slideNumber >= 5 && slideNumber <= 7 && (name === "Inicio" || name === "Anterior")) return "arrow-left";
+      if (slideNumber >= 5 && slideNumber <= 6 && name === "Siguiente") return "arrow-right";
+
+      return "rect";
+    }
+
     function draw() {
       currentSlide = readSlide();
 
@@ -596,10 +656,10 @@
         button.type = "button";
         button.className = "hotspot";
 
-        // Si las dimensiones en píxeles forman un cuadrado, la figura es circular.
-        const pixelW = (link.w / 100) * 1921;
-        const pixelH = (link.h / 100) * 1080;
-        if (Math.abs(pixelW - pixelH) < 4) button.classList.add("circle");
+        // La zona de toque puede ser rectangular aunque la figura del fondo
+        // sea circular o una flecha. El relieve siempre sigue la figura real.
+        const shape = getShape(currentSlide, link);
+        if (shape) button.classList.add(shape);
 
         button.setAttribute("aria-label", "Ir a página " + link.target);
 

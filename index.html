@@ -139,7 +139,7 @@
     }
 
 
-    /* ===== CARTA 2.6 — ZONAS DE TOQUE AJUSTADAS A LAS FIGURAS ===== */
+    /* ===== CARTA 2.7 — RELIEVE RESTAURADO Y ADAPTADO A LA FORMA ===== */
     .hotspot{
       -webkit-tap-highlight-color:transparent;
       outline:none;
@@ -148,28 +148,53 @@
       margin:0;
       background:transparent;
       box-shadow:none;
-      transition:transform .10s ease;
+      transition:transform .10s ease, filter .10s ease;
     }
 
-    /* Las zonas son invisibles: no se dibuja ningún cuadrado sobre la imagen. */
-    .hotspot::before,
-    .hotspot::after{
-      display:none !important;
-      content:none !important;
+    /* El relieve sigue siendo visual y no bloquea el toque. */
+    .hotspot::before{
+      content:"";
+      position:absolute;
+      inset:2%;
+      pointer-events:none;
+      opacity:0;
+      border:1px solid rgba(255,255,255,.24);
+      border-radius:12px;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,.20),
+        inset 0 -4px 7px rgba(0,0,0,.22),
+        0 3px 7px rgba(0,0,0,.18);
+      transition:opacity .10s ease;
     }
 
-    /* Los botones circulares siguen exactamente la forma circular de la imagen. */
-    .hotspot.circle{
+    /* En los botones circulares, el relieve también es circular. */
+    .hotspot.circle::before{
       border-radius:50%;
+    }
+
+    .hotspot:hover::before,
+    .hotspot:focus-visible::before{
+      opacity:.70;
     }
 
     .hotspot:active,
     .hotspot.is-touching{
-      transform:scale(.97);
+      transform:scale(.975);
+      filter:brightness(.97);
+    }
+
+    .hotspot:active::before,
+    .hotspot.is-touching::before{
+      opacity:.90;
+      box-shadow:
+        inset 0 3px 7px rgba(0,0,0,.26),
+        inset 0 -1px 0 rgba(255,255,255,.10),
+        0 2px 5px rgba(0,0,0,.16);
     }
 
     @media (prefers-reduced-motion:reduce){
       .hotspot{transition:none!important;}
+      .hotspot::before{transition:none!important;}
     }
 
 </style>
